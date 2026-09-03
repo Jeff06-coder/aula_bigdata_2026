@@ -25,21 +25,26 @@ import json
 REQUIRED_FIELDS = {"event_id", "event_time", "category", "amount"}
 
 
-def parse_kafka_message(raw_value):
-    """
-    TODO 1:
-    Receba `raw_value` (uma string, o "value" de uma mensagem Kafka) e:
-      1. Tente fazer o parse como JSON (`json.loads`)
-      2. Se nao for um JSON valido, levante `ValueError("Mensagem nao e
-         um JSON valido")`
-      3. Se o JSON parseado nao for um objeto/dicionario, levante
-         `ValueError("Mensagem JSON deve representar um objeto")`
-      4. Se faltar algum campo de REQUIRED_FIELDS, levante
-         `ValueError(f"Campos obrigatorios ausentes: {sorted(faltantes)}")`
-      5. Caso contrario, retorne o dicionario parseado.
-    """
-    raise NotImplementedError("TODO 1: implemente parse_kafka_message")
+def parse_kafka_message(raw_value: str) -> dict:
+  
+  
+  # 1 e 2: Tenta fazer o parse e trata JSON malformatado
+    try:
+        data = json.loads(raw_value)
+    except (json.JSONDecodeError, TypeError):
+        raise ValueError("Mensagem nao e um JSON valido")
 
+  # 3: Garante que o JSON parseado seja um objeto/dicionário (e não número, string ou lista solta)
+    if not isinstance(data, dict):
+        raise ValueError("Mensagem JSON deve representar um objeto")
+
+  # 4: Valida se todos os campos obrigatórios estão presentes
+    faltantes = set(REQUIRED_FIELDS) - set(data.keys())
+    if faltantes:
+        raise ValueError(f"Campos obrigatorios ausentes: {sorted(faltantes)}")
+
+    # 5: Retorna o dicionário pronto para uso
+    return data
 
 def is_valid_event(event):
     """
