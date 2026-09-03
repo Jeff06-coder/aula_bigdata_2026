@@ -46,18 +46,23 @@ def parse_kafka_message(raw_value: str) -> dict:
     # 5: Retorna o dicionário pronto para uso
     return data
 
-def is_valid_event(event):
-    """
-    TODO 2:
-    Receba um dicionario `event` (ja parseado) e retorne True se, e
-    somente se:
-      - todos os campos de REQUIRED_FIELDS estao presentes, E
-      - "amount" e um numero (int ou float), E
-      - "amount" e maior ou igual a zero
-    Caso contrario, retorne False (NAO levante excecao aqui).
-    """
-    raise NotImplementedError("TODO 2: implemente is_valid_event")
+def is_valid_event(event: dict) -> bool:
+    
+    # Regra 1: Valida se todos os campos de REQUIRED_FIELDS estao presentes
+    if not all(field in event for field in REQUIRED_FIELDS):
+        return False
 
+    amount = event.get("amount")
+
+    # Regra 2: Valida se 'amount' e int ou float (evitando que bool passe como int)
+    if isinstance(amount, bool) or not isinstance(amount, (int, float)):
+        return False
+
+    # Regra 3: Valida se 'amount' e maior ou igual a zero
+    if amount < 0:
+        return False
+
+    return True
 
 def filter_valid_events(events):
     """
