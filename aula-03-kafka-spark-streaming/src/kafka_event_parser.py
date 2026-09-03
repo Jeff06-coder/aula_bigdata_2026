@@ -64,10 +64,7 @@ def is_valid_event(event: dict) -> bool:
 
     return True
 
-def filter_valid_events(events):
-    """
-    TODO 3:
-    Receba uma lista de dicionarios `events` e retorne apenas os que
-    passam em `is_valid_event`.
-    """
-    raise NotImplementedError("TODO 3: implemente filter_valid_events")
+def filter_valid_events(events: list[dict]) -> list[dict]:
+
+  return [event for event in events if is_valid_event(event)]
+   
